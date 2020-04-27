@@ -1,0 +1,13 @@
+# Uncomment the following line
+platform :ios, '9.0'
+
+# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+# And ignore the rest of this file... 

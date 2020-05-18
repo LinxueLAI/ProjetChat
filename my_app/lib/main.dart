@@ -29,20 +29,6 @@ class MyApp1 extends StatefulWidget {
   State<MyApp1> createState() => SecondScreen();
 }
 
-class DataMessage {
-  final int id;
-  final String title;
-
-  DataMessage({this.id, this.title});
-
-  factory DataMessage.fromJson(Map<String, dynamic> json) {
-    return DataMessage(
-      id: json['id'],
-      title: json['title'],
-    );
-  }
-}
-
 class ChatScreen extends StatefulWidget {
   @override
   State createState() => ChatScreenState();
@@ -52,18 +38,20 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   final String url = 'http://depinfo-chat.herokuapp.com/api/messages';
   var dataReceivor;
   List dataSentor;
+  int messageCount = 0;
   // DataModel _data;
   // List<MessageModel> _message;
   MessageModel _lastMessage;
+  DataModel _dataModel;
   Future<MessageModel> futureMessageModel;
 
   final List<ChatMessage> _messages = <ChatMessage>[];
   final TextEditingController _textController = TextEditingController();//read the message that we taped in.
   bool _isComposing = false;
   var now = DateTime.now();
-  // GET
+  // GET Message
   Future<MessageModel> getMessage() async {
-    var username = 'Linxue';
+    var username = 'linxue';
     var password = 'admin';
     var basicAuth =
       'Basic ' + base64Encode(utf8.encode('$username:$password'));
@@ -76,6 +64,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         }
       );
 
+    
     setState(() {
       var resBody = json.decode(res.body);
       // print(res.body);
@@ -87,16 +76,17 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       bool out = false;
       while((dataReceivor[index]!=null)&&(out==false)){
         var lastmessage = dataReceivor[index];
+        print('testLastmessage');
         print(lastmessage);
         if(lastmessage['room']==6){
                 // _message
           print(MessageModel.fromJson(lastmessage));
+          print('test_Lastmessage');
+
           _lastMessage = MessageModel.fromJson(lastmessage);
           print('author=${_lastMessage.author},message = ${_lastMessage.message},time=${_lastMessage.timestamp}');
           out= true;
-          break;
         }
-        // print(dataReceivor["last_messages"][index]);
         index++;
       }
 
@@ -117,37 +107,62 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     return _lastMessage;
   }
 
-  // Future<http.Response> createMessage(String title) async {
-  //   var username = 'linxue';
-  //   var password = 'admin';
-  //   var basicAuth =
-  //     'Basic ' + base64Encode(utf8.encode('$username:$password'));
-  //   print(basicAuth);
+  Future<DataModel> getRoomData() async {
+    var username = 'linxue';
+    var password = 'admin';
+    var basicAuth =
+      'Basic ' + base64Encode(utf8.encode('$username:$password'));
+    print(basicAuth);
+
+    var res = await http.get(
+      Uri.encodeFull('http://depinfo-chat.herokuapp.com/api/rooms'),
+      headers: {'authorization': basicAuth,
+        'Accept': 'application/json; charset=UTF-8'
+        }
+      );
+    // setState(() {
+      // var responseBody = res.body;
+      var responseBody = json.decode(res.body);
+      print('responseBody=');
+      print(responseBody);
+      var myroom = responseBody[3];
+      print('myroom=');
+      print(myroom);
+      // var message_count = myroom['message_count'];
+      // print('message_count=');
+      // print(message_count);
+      print(DataModel.fromJson(myroom));
+      _dataModel =  DataModel.fromJson(myroom);
+      print(_dataModel.title);
+      print(_dataModel.lastMessages);
+      print(_dataModel.user);
+      print(_dataModel.messageCount);
+
+      if(messageCount<_dataModel.messageCount){
+          for( var i = 0 ; i< (_dataModel.messageCount-messageCount); i++ ) {
+          print(_dataModel.lastMessages[_dataModel.messageCount-i-1].author);
+          print(_dataModel.lastMessages[_dataModel.messageCount-i-1].message);
+          ChatMessage message = new ChatMessage(
+              name:_dataModel.lastMessages[_dataModel.messageCount-i-1].author,
+              text:_dataModel.lastMessages[_dataModel.messageCount-i-1].message,
+              animationController: new AnimationController(
+              duration: new Duration(milliseconds: 300),
+              vsync: this
+            )
+          );
+          setState((){
+            _messages.insert(0, message);
+          });
+          message.animationController.forward();
+        }
+      }
+      messageCount = _dataModel.messageCount;
+      print(messageCount);
+          // print('test_Lastmessage');
+    // });
     
-  //   final http.Response response = await http.post(
-  //     'http://depinfo-chat.herokuapp.com/api/rooms',
-  //     headers: <String, String>{
-  //       'authorization': basicAuth,
-  //       'Content-Type': 'application/json; charset=UTF-8',
-  //     },
-  //     body: jsonEncode(<String, String>{
-  //       'title': title,
-  //     }),
-  //   );
-  //   if (response.statusCode == 201) {
-  //   // If the server did return a 201 CREATED response,
-  //   // then parse the JSON.
-  //     var data;
-  //     data=DataMessage.fromJson(json.decode(response.body));
-  //     print(data);
-  //     return data;
-  //   }
-  //   else {
-  //   // If the server did not return a 201 CREATED response,
-  //   // then throw an exception.
-  //     throw Exception('Failed to load message');
-  //   }
-  // }
+    return _dataModel;
+  }
 
   // POST to create a room
   Future<DataModel> createState(String name) async{
@@ -188,7 +203,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   // POST to create a message
-  Future<MessageModel> postMessage(String name,String message,String time) async{
+  Future<MessageModel> postMessage(String name,String message) async{
     final String apiUrl='http://depinfo-chat.herokuapp.com/api/messages/';
     print('test5');
 
@@ -227,52 +242,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     }
   }
 
-  // @override
-  // Widget build(BuildContext context){
-  //   return Scaffold(
-  //     appBar: AppBar(
-  //       title: Text('data'),
-  //       backgroundColor: Colors.amberAccent,
-  //     ),
-  //     body: ListView.builder(
-  //       itemCount: data == null?0:data.length,
-  //       itemBuilder: (BuildContext context,int index){
-  //         return new Container(
-  //           child: Center(
-  //             child: Column(
-  //               crossAxisAlignment: CrossAxisAlignment.stretch,
-  //               children: <Widget>[
-  //                 Card(
-  //                   child:Container(
-  //                     padding: EdgeInsets.all(15.0),
-  //                     child: Text(data[index]['title'],
-  //                         style: TextStyle(fontSize: 18.0,color: Colors.black54
-  //                         )),
-  //                   ),
-  //                 ),
-  //                 Card(
-  //                   child:Container(
-  //                     padding: EdgeInsets.all(15.0),
-  //                     child: Text(data[index]['user'],
-  //                         style: TextStyle(fontSize: 18.0,color: Colors.black54
-  //                         )),
-  //                   ),
-  //                 ),
-  //               ],
-  //             ),
-  //           ),
-  //         );
-  //       },
-  //     ),
-  //   );
-  // }
-  // @override
-  // void initState(){
-  //   super.initState();
-  //   this.getMessage();
-  // }
-
-
   @override
   void dispose() {
     for(var message in _messages) {
@@ -291,10 +260,10 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _updateMessage();
   }
   void _sendMessage({ String text }) async{
-    final MessageModel lastmessage = await postMessage('Linxue', text, now.toString());//POST
-    print('name=${'linxue'},message=${_textController.text},time=${now.toString()}');//
+    final MessageModel lastmessage = await postMessage('Linxue', text);//POST
+    print('name=${'Linxue'},message=${_textController.text}}');//
     ChatMessage message = new ChatMessage(
-      name: 'linxue',
+      name: 'Linxue',
       text: text,
       animationController: new AnimationController(
         duration: new Duration(milliseconds: 300),
@@ -359,57 +328,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
         )
     );
   }
-  // final TextEditingController _controller = TextEditingController();
-  // Future<http.Response> _futureAlbum;
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return MaterialApp(
-  //     title: 'Create Data Example',
-  //     theme: ThemeData(
-  //       primarySwatch: Colors.blue,
-  //     ),
-  //     home: Scaffold(
-  //       appBar: AppBar(
-  //         title: Text('Create Data Example'),
-  //       ),
-  //       body: Container(
-  //         alignment: Alignment.center,
-  //         padding: const EdgeInsets.all(8.0),
-  //         child: (_futureAlbum == null)
-  //             ? Column(
-  //                 mainAxisAlignment: MainAxisAlignment.center,
-  //                 children: <Widget>[
-  //                   TextField(
-  //                     controller: _controller,
-  //                     decoration: InputDecoration(hintText: 'Enter Title'),
-  //                   ),
-  //                   RaisedButton(
-  //                     child: Text('Create Data'),
-  //                     onPressed: () {
-  //                       setState(() {
-  //                         _futureAlbum = createMessage(_controller.text);
-  //                       });
-  //                     },
-  //                   ),
-  //                 ],
-  //               )
-  //             : FutureBuilder<dynamic>(
-  //                 future: _futureAlbum,
-  //                 builder: (context, snapshot) {
-  //                   if (snapshot.hasData) {
-  //                     return Text(snapshot.data.title);
-  //                   } else if (snapshot.hasError) {
-  //                     return Text('${snapshot.error}');
-  //                   }
-
-  //                   return CircularProgressIndicator();
-  //                 },
-  //               ),
-  //       ),
-  //     ),
-  //   );
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -480,7 +398,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   @override
   void initState(){
     super.initState();
-    futureMessageModel=getMessage();
+    getRoomData();
+    // futureMessageModel=getMessage(); //to get the message
     // _updateMessage();
     // futureMessageModel
   }
@@ -515,7 +434,9 @@ class ChatMessage extends StatelessWidget {
                         Text(name, style: Theme.of(context).textTheme.subhead),
                         Container(
                           margin: const EdgeInsets.only(top: 5.0),
+                          
                           child: Text(text),
+                          width: MediaQuery.of(context).size.width*0.8,
                         )
                       ]
                   )

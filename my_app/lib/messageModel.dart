@@ -17,21 +17,21 @@ class MessageModel {
     MessageModel({
         this.author,
         this.message,
-        this.timestamp,
+        // this.timestamp,
         this.room,
     });
 
     factory MessageModel.fromJson(Map<String, dynamic> json) => MessageModel(
         author: json["author"],
         message: json["message"],
-        timestamp: DateTime.parse(json["timestamp"]),
+        // timestamp: DateTime.parse(json["timestamp"]),
         room: json["room"],
     );
 
     Map<String, dynamic> toJson() => {
         "author": author,
         "message": message,
-        "timestamp": timestamp.toIso8601String(),
+        // "timestamp": timestamp.toIso8601String(),
         "room": room,
     };
 }

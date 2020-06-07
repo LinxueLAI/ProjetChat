@@ -19,11 +19,18 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+
   google_maps_flutter: ^0.5.11
   geolocator: ^5.3.1
   # Add the following two lines
   http: ^0.12.0+4
   json_serializable: ^2.0.2
+  flutter_screenutil: ^1.0.2
+  emoji_picker: ^0.1.0
+  image_picker: 0.6.6+4
+  photo_view: ^0.9.2
+
+ 
 
 dev_dependencies:
   flutter_test:
@@ -40,6 +47,15 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  assets:
+    - images/Dice1.png
+    - images/Dice2.png
+    - images/Dice3.png
+    - images/Dice4.png
+    - images/Dice5.png
+    - images/Dice6.png
+    - images/online.gif
+
 
   # To add assets to your application, add an assets section, like this:
   # assets:

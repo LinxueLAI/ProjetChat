@@ -43,23 +43,23 @@ class DataModel {
 class LastMessage {
     String author;
     String message;
-    // DateTime timestamp;
+    DateTime timestamp;
 
     LastMessage({
         this.author,
         this.message,
-        // this.timestamp,
+        this.timestamp,
     });
 
     factory LastMessage.fromJson(Map<String, dynamic> json) => LastMessage(
         author: json["author"],
         message: json["message"],
-        // timestamp: DateTime.parse(json["timestamp"]),
+        timestamp: DateTime.parse(json["timestamp"]),
     );
 
     Map<String, dynamic> toJson() => {
         "author": author,
         "message": message,
-        // "timestamp": timestamp.toIso8601String(),
+        "timestamp": timestamp.toIso8601String(),
     };
 }

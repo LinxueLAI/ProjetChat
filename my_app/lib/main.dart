@@ -7,7 +7,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:my_app/data_model.dart';
 import 'package:my_app/messageModel.dart';
-import 'package:emoji_picker/emoji_picker.dart';
+// import 'package:emoji_picker/emoji_picker.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:my_app/PhotoGalleryPage.dart';
 import 'dart:math';
@@ -491,21 +491,21 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     ),
                   ),
                   
-                  new Container(
-                    margin: new EdgeInsets.symmetric(horizontal: 4.0),
-                    child: new IconButton(
-                      icon: new Icon(Icons.face),
-                      onPressed:() {
-                        setState(() {
-                          isShowSticker = !isShowSticker;
-                          if (isShowSticker) {
-                            isShowGIF = false;
-                          }
-                        });
-                      },
-                      color: Colors.blue,
-                    ),
-                  ),
+                  // new Container(
+                  //   margin: new EdgeInsets.symmetric(horizontal: 4.0),
+                  //   child: new IconButton(
+                  //     icon: new Icon(Icons.face),
+                  //     onPressed:() {
+                  //       setState(() {
+                  //         isShowSticker = !isShowSticker;
+                  //         if (isShowSticker) {
+                  //           isShowGIF = false;
+                  //         }
+                  //       });
+                  //     },
+                  //     color: Colors.blue,
+                  //   ),
+                  // ),
 
                   new Container(
                     // body: new Center(
@@ -575,16 +575,16 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     );
   }
   Widget buildSticker() {
-    return EmojiPicker(
-      rows: 3,
-      columns: 7,
-      buttonMode: ButtonMode.MATERIAL,
-      recommendKeywords: ['racing', 'horse'],
-      numRecommended: 10,
-      onEmojiSelected: (emoji, category) {
-        _handleSubmitted(emoji.emoji);
-      },
-    );
+    // return EmojiPicker(
+    //   rows: 3,
+    //   columns: 7,
+    //   buttonMode: ButtonMode.MATERIAL,
+    //   recommendKeywords: ['racing', 'horse'],
+    //   numRecommended: 10,
+    //   onEmojiSelected: (emoji, category) {
+    //     _handleSubmitted(emoji.emoji);
+    //   },
+    // );
   }
 
   Widget _meetingPhotos(BuildContext context) {

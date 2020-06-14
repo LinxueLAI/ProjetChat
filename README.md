@@ -14,4 +14,3 @@ functions:
 5. Update messages if there'are some new messages arrive in server.
 
 You can install the application to your mobile phone by "app-release.apk". 
-Path: my_app\build\app\outputs\apk\release\app-release.apk.

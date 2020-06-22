@@ -1,4 +1,6 @@
 # ProjetChat
+server: http://depinfo-chat.herokuapp.com/api/  more infos: https://github.com/DamienCouillard/PollsAppProject
+client:
 Login:
 username: ['admin','damien','bilal']
 passeword:['admin','admin','admin']
